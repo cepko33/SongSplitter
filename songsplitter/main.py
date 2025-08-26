@@ -38,7 +38,7 @@ def main():
                 except ValueError:
                     print(f"Invalid band format: {band_str}. Please use 'low_hz-high_hz' (e.g., '0-500').")
                     return
-        split_frequency_bands(args.audio_file, args.output_prefix, custom_bands)
+        split_frequency_bands(args.audio_file, args.output_prefix, custom_bands, args.format)
     elif args.mode == "source":
         separate_sources(args.audio_file, args.output_dir, args.format, args.mp3_bitrate)
 

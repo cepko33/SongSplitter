@@ -2,7 +2,7 @@ import argparse
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 
-def split_frequency_bands(audio_path, output_prefix="output", bands=None):
+def split_frequency_bands(audio_path, output_prefix="output", bands=None, output_format="wav"):
     """
     Splits an audio file into different frequency bands.
 
@@ -11,6 +11,7 @@ def split_frequency_bands(audio_path, output_prefix="output", bands=None):
         output_prefix (str): Prefix for the output file names.
         bands (list of tuples): A list of (low_hz, high_hz) tuples defining the frequency bands.
                                 If None, default bands (low, mid, high) will be used.
+        output_format (str): The desired output format (e.g., "wav", "mp3", "flac").
     """
     audio = AudioSegment.from_file(audio_path)
 
@@ -37,34 +38,6 @@ def split_frequency_bands(audio_path, output_prefix="output", bands=None):
         else:
             # Apply band-pass filter
             filtered_audio = audio.low_pass_filter(high_hz).high_pass_filter(low_hz)
-        output_path = f"{output_prefix}_{band_names[i]}.wav"
-        filtered_audio.export(output_path, format="wav")
+        output_path = f"{output_prefix}_{band_names[i]}.{output_format}"
+        filtered_audio.export(output_path, format=output_format)
         print(f"Exported {band_names[i]} band to '{output_path}'")
-
-def main():
-    parser = argparse.ArgumentParser(description="Split an audio file into frequency bands.")
-    parser.add_argument("audio_file", help="Path to the input audio file.")
-    parser.add_argument("--output_prefix", default="output",
-                        help="Prefix for the output frequency band files (e.g., 'song_low.wav').")
-    parser.add_argument("--bands", nargs='+', type=str,
-                        help="Custom frequency bands as 'low_hz-high_hz' (e.g., '0-500 500-4000').")
-
-    args = parser.parse_args()
-
-    custom_bands = None
-    if args.bands:
-        custom_bands = []
-        for band_str in args.bands:
-            try:
-                low_hz, high_hz = map(int, band_str.split('-'))
-                if low_hz >= high_hz:
-                    raise ValueError("Low frequency must be less than high frequency.")
-                custom_bands.append((low_hz, high_hz))
-            except ValueError:
-                print(f"Invalid band format: {band_str}. Please use 'low_hz-high_hz' (e.g., '0-500').")
-                return
-
-    split_frequency_bands(args.audio_file, args.output_prefix, custom_bands)
-
-if __name__ == "__main__":
-    main()

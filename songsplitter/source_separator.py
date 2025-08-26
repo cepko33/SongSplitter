@@ -65,21 +65,3 @@ def separate_sources(audio_path, output_dir="separated_output", output_format="w
         save_audio(source, output_path, **kwargs)
 
     print(f"Separation complete. Separated sources saved to '{output_dir}'")
-
-def main():
-    parser = argparse.ArgumentParser(description="Separate an audio file into its constituent sources (e.g., drums, bass, melody).")
-    parser.add_argument("audio_file", help="Path to the input audio file.")
-    parser.add_argument("--output_dir", default="separated_output",
-                        help="Directory to save the separated audio files.")
-
-    parser.add_argument("--format", default="wav", choices=["wav", "mp3"],
-                        help="Output format for separated sources: 'wav' or 'mp3'.")
-    parser.add_argument("--mp3_bitrate", default=320, type=int,
-                        help="Bitrate for MP3 output (if format is 'mp3').")
-
-    args = parser.parse_args()
-
-    separate_sources(args.audio_file, args.output_dir, args.format, args.mp3_bitrate)
-
-if __name__ == "__main__":
-    main()
